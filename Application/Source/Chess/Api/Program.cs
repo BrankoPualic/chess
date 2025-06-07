@@ -8,6 +8,8 @@ builder.Services.AddSignalR(options =>
 	options.EnableDetailedErrors = true;
 });
 
+builder.Services.AddSingleton<MatchTracker>();
+
 var app = builder.Build();
 app.Use(async (context, next) =>
 {
