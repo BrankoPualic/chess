@@ -6,20 +6,29 @@ namespace Api.Hubs;
 
 public class MatchTracker
 {
-	private static readonly Queue<string> _queue = [];
-	private static object _queueLock = new();
+	private static readonly LinkedList<string> _queue = [];
+	private static readonly Lock _queueLock = new();
 	private static readonly ConcurrentDictionary<Guid, Match> _matches = [];
 	private static readonly Random _random = new();
-	private static readonly object _randomLock = new();
+	private static readonly Lock _randomLock = new();
 
 	public bool TryMatchPlayer(string connectionId, out Match? match, out string? opponent)
 	{
 		lock (_queueLock)
 		{
-			opponent = _queue.Count > 0 ? _queue.Dequeue() : null;
+			if (_queue.Count == 0)
+			{
+				opponent = null;
+			}
+			else
+			{
+				opponent = _queue.First?.Value;
+				_queue.RemoveFirst();
+			}
+
 			if (opponent == null)
 			{
-				_queue.Enqueue(connectionId);
+				_queue.AddLast(connectionId);
 				match = null;
 				return false;
 			}
@@ -41,6 +50,19 @@ public class MatchTracker
 
 		_matches.TryAdd(match.Id, match);
 		return true;
+	}
+
+	public bool TryCancelMatchmaking(string connectionId)
+	{
+		lock (_queueLock)
+		{
+			var player = _queue.Find(connectionId);
+			if (player == null)
+				return false;
+
+			_queue.Remove(player);
+			return true;
+		}
 	}
 
 	public bool TryRemoveMatch(Guid matchId) => _matches.TryRemove(matchId, out _);

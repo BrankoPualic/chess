@@ -12,6 +12,8 @@ public interface IMatchmakingHub
 	Task Conceded();
 
 	Task Victory();
+
+	Task Cancelled();
 }
 
 public class MatchmakingHub(MatchTracker matchTracker) : Hub<IMatchmakingHub>
@@ -34,11 +36,11 @@ public class MatchmakingHub(MatchTracker matchTracker) : Hub<IMatchmakingHub>
 
 	public async Task ConcedeMatch(Match match)
 	{
-		var concedingPlayer = Context.ConnectionId;
+		var player = Context.ConnectionId;
 
 		if (matchTracker.TryRemoveMatch(match.Id))
 		{
-			if (concedingPlayer == match.PlayerWhite)
+			if (player == match.PlayerWhite)
 			{
 				await Clients.Client(match.PlayerWhite).Conceded();
 				await Clients.Client(match.PlayerBlack).Victory();
@@ -49,5 +51,14 @@ public class MatchmakingHub(MatchTracker matchTracker) : Hub<IMatchmakingHub>
 				await Clients.Client(match.PlayerWhite).Victory();
 			}
 		}
+	}
+
+	public async Task Cancel()
+	{
+		var player = Context.ConnectionId;
+
+		matchTracker.TryCancelMatchmaking(player);
+
+		await Clients.Client(player).Cancelled();
 	}
 }

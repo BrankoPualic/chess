@@ -18,9 +18,11 @@ function signalr_Matchmaking(): void {
         .build();
 
     $('#start').on('click', () => matchmakingConnection.send('findMatch'));
+    $(document).on('click', '#cancel', () => matchmakingConnection.send('cancel'));
 
     matchmakingConnection.on('waitingForMatch', () => page('/queue'));
     matchmakingConnection.on('matchFound', (match: any) => page('/match'));
+    matchmakingConnection.on('cancelled', () => page('/'));
 
     matchmakingConnection.start().catch((err) => console.error(err));
 }
