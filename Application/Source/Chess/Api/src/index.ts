@@ -31,17 +31,45 @@ function signalr_Matchmaking(): void {
 function routing(): void {
     page("/", () => showView("homePage", homeHtml));
     page("/queue", () => showView("queuePage", queueHtml));
-    page("/match", () => showView("matchPage", matchHtml));
-
-    function showView(id: string, html: string): void {
-        const views = $('.view');
-        views.each((i, v) => { v.style.display = 'none' });
-
-        const el = $(`#${id}`);
-
-        el.html(html);
-        el.css('display', 'block');
-    }
+    page("/match", () => view_RenderMatch());
 
     page();
+}
+
+function showView(id: string, html: string): void {
+    const views = $('.view');
+    views.each((i, v) => { v.style.display = 'none' });
+
+    const container = $(`#${id}`);
+
+    container.html(html);
+    container.css('display', 'block');
+}
+
+function view_RenderMatch(): void {
+    showView('matchPage', matchHtml);
+    board_Init();
+}
+
+// Board
+
+function board_Init(): void {
+    const container = $(`#board`);
+
+    let board = `<table><tbody>`;
+
+    for (let i = 8; i > 0; i--) {
+        board += `<tr id="row_${i}" class="board-row">`;
+
+        for (let j = 97; j < 105; j++) { // ASCII (a, b, c, d, e, f, g, h)
+            const colorClass = (i % 2 + j % 2) === 1 ? 'light-cell' : 'dark-cell';
+            board += `<td id="col_${String.fromCharCode(j)}" class="column ${colorClass}"></td>`
+        }
+
+        board += `</tr>`;
+    }
+
+    board += `</tbody></table>`;
+
+    container.html(board);
 }

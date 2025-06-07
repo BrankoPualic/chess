@@ -16,7 +16,6 @@ function signalr_Matchmaking() {
         .withUrl('/hub/matchmaking')
         .build();
     $('#start').on('click', function () { return matchmakingConnection.send('findMatch'); });
-    //$('#cancel').on('click', () => matchmakingConnection.send('cancel'));
     $(document).on('click', '#cancel', function () { return matchmakingConnection.send('cancel'); });
     matchmakingConnection.on('waitingForMatch', function () { return (0, page_1.default)('/queue'); });
     matchmakingConnection.on('matchFound', function (match) { return (0, page_1.default)('/match'); });
@@ -27,13 +26,32 @@ function signalr_Matchmaking() {
 function routing() {
     (0, page_1.default)("/", function () { return showView("homePage", home_html_1.default); });
     (0, page_1.default)("/queue", function () { return showView("queuePage", queue_html_1.default); });
-    (0, page_1.default)("/match", function () { return showView("matchPage", match_html_1.default); });
-    function showView(id, html) {
-        var views = $('.view');
-        views.each(function (i, v) { v.style.display = 'none'; });
-        var el = $("#".concat(id));
-        el.html(html);
-        el.css('display', 'block');
-    }
+    (0, page_1.default)("/match", function () { return view_RenderMatch(); });
     (0, page_1.default)();
+}
+function showView(id, html) {
+    var views = $('.view');
+    views.each(function (i, v) { v.style.display = 'none'; });
+    var container = $("#".concat(id));
+    container.html(html);
+    container.css('display', 'block');
+}
+function view_RenderMatch() {
+    showView('matchPage', match_html_1.default);
+    board_Init();
+}
+// Board
+function board_Init() {
+    var container = $("#board");
+    var board = "<table><tbody>";
+    for (var i = 8; i > 0; i--) {
+        board += "<tr id=\"row_".concat(i, "\" class=\"board-row\">");
+        for (var j = 97; j < 105; j++) { // ASCII (a, b, c, d, e, f, g, h)
+            var colorClass = (i % 2 + j % 2) === 1 ? 'light-cell' : 'dark-cell';
+            board += "<td id=\"col_".concat(String.fromCharCode(j), "\" class=\"column ").concat(colorClass, "\"></td>");
+        }
+        board += "</tr>";
+    }
+    board += "</tbody></table>";
+    container.html(board);
 }
