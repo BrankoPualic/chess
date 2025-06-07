@@ -2,7 +2,12 @@
 
 namespace Api.Hubs;
 
-public class ChatHub : Hub
+public interface IChatClient
 {
-	public async Task NewMessage(long username, string message) => await Clients.All.SendAsync("messageReceived", username, message);
+	Task ReceiveMessage(long username, string message);
+}
+
+public class ChatHub : Hub<IChatClient>
+{
+	public async Task SendMessage(long username, string message) => await Clients.All.ReceiveMessage(username, message);
 }

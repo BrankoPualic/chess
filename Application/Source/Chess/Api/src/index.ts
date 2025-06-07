@@ -10,7 +10,7 @@ const connection = new signalR.HubConnectionBuilder()
     .withUrl("/hub")
     .build();
 
-connection.on("messageReceived", (username: string, message: string) => {
+connection.on("receiveMessage", (username: string, message: string) => {
     const m = document.createElement("div");
 
     m.innerHTML = `<div class="message-author">${username}</div><div>${message}</div>`;
@@ -32,6 +32,6 @@ tbMessage.addEventListener("keyup", (e: KeyboardEvent) => {
 btnSend.addEventListener("click", send);
 
 function send() {
-    connection.send("newMessage", username, tbMessage.value)
+    connection.send("sendMessage", username, tbMessage.value)
         .then(() => (tbMessage.value = ""));
 }

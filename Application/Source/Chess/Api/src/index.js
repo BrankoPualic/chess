@@ -9,7 +9,7 @@ var username = new Date().getTime();
 var connection = new signalR.HubConnectionBuilder()
     .withUrl("/hub")
     .build();
-connection.on("messageReceived", function (username, message) {
+connection.on("receiveMessage", function (username, message) {
     var m = document.createElement("div");
     m.innerHTML = "<div class=\"message-author\">".concat(username, "</div><div>").concat(message, "</div>");
     divMessages.appendChild(m);
@@ -24,6 +24,6 @@ tbMessage.addEventListener("keyup", function (e) {
 });
 btnSend.addEventListener("click", send);
 function send() {
-    connection.invoke("NewMessage", username, tbMessage.value)
+    connection.send("sendMessage", username, tbMessage.value)
         .then(function () { return (tbMessage.value = ""); });
 }
