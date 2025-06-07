@@ -1,37 +1,45 @@
 ﻿import * as signalR from "@microsoft/signalr";
+import * as $ from "jquery";
 import "./css/main.css";
+import page from "page";
 
-const divMessages: HTMLDivElement = document.querySelector("#divMessages");
-const tbMessage: HTMLInputElement = document.querySelector("#tbMessage");
-const btnSend: HTMLButtonElement = document.querySelector("#btnSend");
-const username = new Date().getTime();
+import homeHtml from "./pages/home.html";
+import queueHtml from "./pages/queue.html";
+import matchHtml from "./pages/match.html";
 
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/hub")
-    .build();
-
-connection.on("receiveMessage", (username: string, message: string) => {
-    const m = document.createElement("div");
-
-    m.innerHTML = `<div class="message-author">${username}</div><div>${message}</div>`;
-
-    divMessages.appendChild(m);
-    divMessages.scrollTop = divMessages.scrollHeight;
+$(() => {
+    routing();
+    signalr_Matchmaking();
 });
 
-connection.start().catch((err) => document.write(err));
+function signalr_Matchmaking(): void {
+    const matchmakingConnection = new signalR.HubConnectionBuilder()
+        .withUrl('/hub/matchmaking')
+        .build();
 
-tbMessage.addEventListener("keyup", (e: KeyboardEvent) => {
-    connection.invoke("Ping", "hello").catch(err => console.error(err));
+    $('#start').on('click', () => matchmakingConnection.send('findMatch'));
 
-    if (e.key === "Enter") {
-        send();
+    matchmakingConnection.on('waitingForMatch', () => page('/queue'));
+    matchmakingConnection.on('matchFound', (match: any) => page('/match'));
+
+    matchmakingConnection.start().catch((err) => console.error(err));
+}
+
+// Routing
+function routing(): void {
+    page("/", () => showView("homePage", homeHtml));
+    page("/queue", () => showView("queuePage", queueHtml));
+    page("/match", () => showView("matchPage", matchHtml));
+
+    function showView(id: string, html: string): void {
+        const views = $('.view');
+        views.each((i, v) => { v.style.display = 'none' });
+
+        const el = $(`#${id}`);
+
+        el.html(html);
+        el.css('display', 'block');
     }
-});
 
-btnSend.addEventListener("click", send);
-
-function send() {
-    connection.send("sendMessage", username, tbMessage.value)
-        .then(() => (tbMessage.value = ""));
+    page();
 }

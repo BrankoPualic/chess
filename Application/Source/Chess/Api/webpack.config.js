@@ -23,6 +23,10 @@ module.exports = {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
+            {
+                test: /\.html$/,
+                use: ["html-loader"]
+            },
         ],
     },
     plugins: [

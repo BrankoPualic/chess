@@ -29,5 +29,6 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.MapHub<ChatHub>("/hub");
+app.MapHub<MatchmakingHub>("/hub/matchmaking");
 
 app.Run();
