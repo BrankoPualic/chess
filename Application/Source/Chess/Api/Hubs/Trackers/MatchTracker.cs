@@ -2,9 +2,9 @@
 using Api.Domain.Models;
 using System.Collections.Concurrent;
 
-namespace Api.Hubs;
+namespace Api.Hubs.Trackers;
 
-public class MatchTracker
+public class MatchTracker(BoardTracker boardTracker)
 {
 	private static readonly LinkedList<string> _queue = [];
 	private static readonly Lock _queueLock = new();
@@ -45,7 +45,8 @@ public class MatchTracker
 			Id = Guid.NewGuid(),
 			PlayerWhite = whiteFirst ? opponent : connectionId,
 			PlayerBlack = whiteFirst ? connectionId : opponent,
-			PlayerTurn = ePlayerTurn.White
+			PlayerTurn = ePlayerColor.White,
+			Board = boardTracker.InitializeBoard()
 		};
 
 		_matches.TryAdd(match.Id, match);

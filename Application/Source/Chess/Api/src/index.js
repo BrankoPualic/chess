@@ -46,7 +46,8 @@ function board_Init() {
     var board = "<table><tbody>";
     for (var i = 8; i > 0; i--) {
         board += "<tr id=\"row_".concat(i, "\" class=\"board-row\">");
-        for (var j = 97; j < 105; j++) { // ASCII (a, b, c, d, e, f, g, h)
+        // ASCII (a, b, c, d, e, f, g, h)
+        for (var j = 97; j < 105; j++) {
             var colorClass = (i % 2 + j % 2) === 1 ? 'light-cell' : 'dark-cell';
             board += "<td id=\"col_".concat(String.fromCharCode(j), "\" class=\"column ").concat(colorClass, "\"></td>");
         }

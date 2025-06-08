@@ -61,7 +61,8 @@ function board_Init(): void {
     for (let i = 8; i > 0; i--) {
         board += `<tr id="row_${i}" class="board-row">`;
 
-        for (let j = 97; j < 105; j++) { // ASCII (a, b, c, d, e, f, g, h)
+        // ASCII (a, b, c, d, e, f, g, h)
+        for (let j = 97; j < 105; j++) {
             const colorClass = (i % 2 + j % 2) === 1 ? 'light-cell' : 'dark-cell';
             board += `<td id="col_${String.fromCharCode(j)}" class="column ${colorClass}"></td>`
         }

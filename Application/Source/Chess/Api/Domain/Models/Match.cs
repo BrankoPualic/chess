@@ -8,5 +8,7 @@ public class Match
 
 	public string PlayerBlack { get; set; }
 
-	public ePlayerTurn PlayerTurn { get; set; }
+	public ePlayerColor PlayerTurn { get; set; }
+
+	public List<Figure> Board { get; set; } = [];
 }

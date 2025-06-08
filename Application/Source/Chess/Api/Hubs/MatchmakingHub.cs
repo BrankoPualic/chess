@@ -1,4 +1,5 @@
 ﻿using Api.Domain.Models;
+using Api.Hubs.Trackers;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Api.Hubs;

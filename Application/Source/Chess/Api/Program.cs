@@ -1,4 +1,5 @@
 using Api.Hubs;
+using Api.Hubs.Trackers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -8,6 +9,7 @@ builder.Services.AddSignalR(options =>
 	options.EnableDetailedErrors = true;
 });
 
+builder.Services.AddSingleton<BoardTracker>();
 builder.Services.AddSingleton<MatchTracker>();
 
 var app = builder.Build();
