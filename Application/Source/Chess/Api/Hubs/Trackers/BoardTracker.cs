@@ -1,5 +1,6 @@
 ﻿using Api.Domain;
 using Api.Domain.Models;
+using Api.Domain.Models.Figures;
 
 namespace Api.Hubs.Trackers;
 
@@ -41,36 +42,31 @@ public class BoardTracker
 
 	public void MoveFigure(Match match, Figure movedFigure, string newPosition)
 	{
-		var board = match.Board;
-		var previousFigureState = board.Where(_ => _.Type == movedFigure.Type && _.Color == movedFigure.Color && _.Position == movedFigure.Position).FirstOrDefault();
+		var figureOnBoard = match.Board.FirstOrDefault(_ => _.Id == movedFigure.Id);
 
-		if (previousFigureState == null)
+		if (figureOnBoard == null)
 			throw new InvalidOperationException("Figure doesn't exist");
 
-		previousFigureState.Position = newPosition;
-		match.PlayerTurn = match.PlayerTurn == ePlayerColor.White ? ePlayerColor.Black : ePlayerColor.White;
+		figureOnBoard.PreviousPosition = figureOnBoard.Position;
+		figureOnBoard.Position = newPosition;
+
+		match.PlayerTurn = match.PlayerTurn == ePlayerColor.White
+			? ePlayerColor.Black
+			: ePlayerColor.White;
 	}
 
 	public bool IsValidMove(List<Figure> board, Figure movedFigure, string newPosition, Figure lastMovedFigure = null)
-	{
-		var validator = GetFigureInstance(movedFigure.Type);
-		// Reuse the data from movedFigure
-		validator.Color = movedFigure.Color;
-		validator.Position = movedFigure.Position;
-		validator.PreviousPosition = movedFigure.PreviousPosition;
-
-		return validator.IsValidMove(board, movedFigure, newPosition, lastMovedFigure);
-	}
+		=> GetFigureInstance(movedFigure.Type).IsValidMove(board, movedFigure, newPosition, lastMovedFigure);
 
 	public static Figure GetFigureInstance(eFigureType type)
-	=> type switch
-	{
-		eFigureType.Pawn => new Pawn(),
-		eFigureType.Rock => new Rock(),
-		eFigureType.Bishop => new Bishop(),
-		eFigureType.Knight => new Knight(),
-		eFigureType.Queen => new Queen(),
-		eFigureType.King => new King(),
-		_ => throw new InvalidOperationException("Invalid figure type")
-	};
+		=> type switch
+		{
+			eFigureType.Pawn => new Pawn(),
+			eFigureType.Rock => new Rock(),
+			eFigureType.Bishop => new Bishop(),
+			eFigureType.Knight => new Knight(),
+			eFigureType.Queen => new Queen(),
+			eFigureType.King => new King(),
+			_ => throw new InvalidOperationException("Invalid figure type")
+		};
 }

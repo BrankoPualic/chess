@@ -1,4 +1,5 @@
 ﻿using Api.Domain.Models;
+using Api.Domain.Models.Figures;
 using Api.Hubs.Trackers;
 using Microsoft.AspNetCore.SignalR;
 

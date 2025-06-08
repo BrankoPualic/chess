@@ -1,5 +1,5 @@
 ﻿using Api.Domain;
-using Api.Domain.Models;
+using Api.Domain.Models.Figures;
 using Api.Hubs.Trackers;
 
 namespace Test;

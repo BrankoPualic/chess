@@ -1,4 +1,6 @@
-﻿namespace Api.Domain.Models;
+﻿using Api.Domain.Models.Figures;
+
+namespace Api.Domain.Models;
 
 public class Match
 {
