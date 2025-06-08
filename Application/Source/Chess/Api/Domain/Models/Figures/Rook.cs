@@ -1,8 +1,8 @@
 ﻿namespace Api.Domain.Models.Figures;
 
-public class Rock : Figure
+public class Rook : Figure
 {
-	public override eFigureType Type => eFigureType.Rock;
+	public override eFigureType Type => eFigureType.Rook;
 
 	public override bool IsValidMove(List<Figure> board, Figure figure, string newPosition, Figure lastMovedFigure = null)
 	{

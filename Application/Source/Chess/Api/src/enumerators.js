@@ -9,7 +9,7 @@ var ePlayerColor;
 var eFigureType;
 (function (eFigureType) {
     eFigureType[eFigureType["Pawn"] = 1] = "Pawn";
-    eFigureType[eFigureType["Rock"] = 2] = "Rock";
+    eFigureType[eFigureType["Rook"] = 2] = "Rook";
     eFigureType[eFigureType["Knight"] = 3] = "Knight";
     eFigureType[eFigureType["Bishop"] = 4] = "Bishop";
     eFigureType[eFigureType["Queen"] = 5] = "Queen";

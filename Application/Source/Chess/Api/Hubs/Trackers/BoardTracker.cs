@@ -20,7 +20,7 @@ public class BoardTracker
 				Figure figure = (row, col) switch
 				{
 					(2 or 7, _) => new Pawn(),
-					(_, 'a' or 'h') => new Rock(),
+					(_, 'a' or 'h') => new Rook(),
 					(_, 'b' or 'g') => new Knight(),
 					(_, 'c' or 'f') => new Bishop(),
 					(_, 'd') => new Queen(),
@@ -62,7 +62,7 @@ public class BoardTracker
 		=> type switch
 		{
 			eFigureType.Pawn => new Pawn(),
-			eFigureType.Rock => new Rock(),
+			eFigureType.Rook => new Rook(),
 			eFigureType.Bishop => new Bishop(),
 			eFigureType.Knight => new Knight(),
 			eFigureType.Queen => new Queen(),

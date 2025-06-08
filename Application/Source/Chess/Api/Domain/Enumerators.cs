@@ -9,7 +9,7 @@ public enum ePlayerColor
 public enum eFigureType
 {
 	Pawn = 1,
-	Rock = 2,
+	Rook = 2,
 	Knight = 3,
 	Bishop = 4,
 	Queen = 5,

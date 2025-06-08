@@ -149,7 +149,7 @@ function board_Init(): void {
 const FigureHtml: Record<ePlayerColor, Record<eFigureType, string>> = {
     [ePlayerColor.White]: {
         [eFigureType.Pawn]: '&#9817;',
-        [eFigureType.Rock]: '&#9814;',
+        [eFigureType.Rook]: '&#9814;',
         [eFigureType.Knight]: '&#9816;',
         [eFigureType.Bishop]: '&#9815;',
         [eFigureType.Queen]: '&#9813;',
@@ -157,7 +157,7 @@ const FigureHtml: Record<ePlayerColor, Record<eFigureType, string>> = {
     },
     [ePlayerColor.Black]: {
         [eFigureType.Pawn]: '&#9823;',
-        [eFigureType.Rock]: '&#9820;',
+        [eFigureType.Rook]: '&#9820;',
         [eFigureType.Knight]: '&#9822;',
         [eFigureType.Bishop]: '&#9821;',
         [eFigureType.Queen]: '&#9819;',

@@ -27,7 +27,7 @@ public class BoardUT
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White).Count(), Is.EqualTo(16));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White && _.Type == eFigureType.Queen).ToList(), Has.Count.EqualTo(1));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White && _.Type == eFigureType.King).ToList(), Has.Count.EqualTo(1));
-			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White && _.Type == eFigureType.Rock).ToList(), Has.Count.EqualTo(2));
+			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White && _.Type == eFigureType.Rook).ToList(), Has.Count.EqualTo(2));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White && _.Type == eFigureType.Bishop).ToList(), Has.Count.EqualTo(2));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White && _.Type == eFigureType.Knight).ToList(), Has.Count.EqualTo(2));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.White && _.Type == eFigureType.Pawn).ToList(), Has.Count.EqualTo(8));
@@ -40,7 +40,7 @@ public class BoardUT
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black).ToList(), Has.Count.EqualTo(16));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Queen).ToList(), Has.Count.EqualTo(1));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.King).ToList(), Has.Count.EqualTo(1));
-			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Rock).ToList(), Has.Count.EqualTo(2));
+			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Rook).ToList(), Has.Count.EqualTo(2));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Bishop).ToList(), Has.Count.EqualTo(2));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Knight).ToList(), Has.Count.EqualTo(2));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Pawn).ToList(), Has.Count.EqualTo(8));
