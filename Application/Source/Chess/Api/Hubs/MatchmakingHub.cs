@@ -65,15 +65,16 @@ public class MatchmakingHub(MatchTracker matchTracker, BoardTracker boardTracker
 		await Clients.Client(player).Cancelled();
 	}
 
-	public async Task Move(Match match, Figure movedFigure, string newPosition)
+	public async Task Move(Match match, Figure movedFigure, string newPosition, Figure lastMovedFigure = null)
 	{
 		// Validate move
+		if (!boardTracker.IsValidMove(match.Board, movedFigure, newPosition, lastMovedFigure))
+			throw new InvalidOperationException("Your move is invalid");
 
 		// Process move
 		boardTracker.MoveFigure(match, movedFigure, newPosition);
 
 		// Send back updated match details
-
 		await Clients.Clients(match.PlayerBlack, match.PlayerWhite).Moved(match);
 	}
 }

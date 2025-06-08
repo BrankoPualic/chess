@@ -16,24 +16,21 @@ public class BoardTracker
 		{
 			foreach (var col in cols)
 			{
-				var figure = new Figure
+				Figure figure = (row, col) switch
 				{
-					Color = row is 1 or 2 ? ePlayerColor.White : ePlayerColor.Black,
-					Position = $"{col}{row}",
-					Type = row switch
-					{
-						2 or 7 => eFigureType.Pawn,
-						_ => col switch
-						{
-							'a' or 'h' => eFigureType.Rock,
-							'b' or 'g' => eFigureType.Knight,
-							'c' or 'f' => eFigureType.Bishop,
-							'd' => eFigureType.Queen,
-							'e' => eFigureType.King,
-							_ => throw new InvalidOperationException("Invalid Column"),
-						}
-					}
+					(2 or 7, _) => new Pawn(),
+					(_, 'a' or 'h') => new Rock(),
+					(_, 'b' or 'g') => new Knight(),
+					(_, 'c' or 'f') => new Bishop(),
+					(_, 'd') => new Queen(),
+					(_, 'e') => new King(),
+					_ => throw new InvalidOperationException("Invalid piece")
 				};
+
+				figure.Id = Guid.NewGuid();
+				figure.Color = row is 1 or 2 ? ePlayerColor.White : ePlayerColor.Black;
+				figure.Position = $"{col}{row}";
+				figure.PreviousPosition = $"{col}{row}";
 
 				board.Add(figure);
 			}
@@ -53,4 +50,27 @@ public class BoardTracker
 		previousFigureState.Position = newPosition;
 		match.PlayerTurn = match.PlayerTurn == ePlayerColor.White ? ePlayerColor.Black : ePlayerColor.White;
 	}
+
+	public bool IsValidMove(List<Figure> board, Figure movedFigure, string newPosition, Figure lastMovedFigure = null)
+	{
+		var validator = GetFigureInstance(movedFigure.Type);
+		// Reuse the data from movedFigure
+		validator.Color = movedFigure.Color;
+		validator.Position = movedFigure.Position;
+		validator.PreviousPosition = movedFigure.PreviousPosition;
+
+		return validator.IsValidMove(board, movedFigure, newPosition, lastMovedFigure);
+	}
+
+	public static Figure GetFigureInstance(eFigureType type)
+	=> type switch
+	{
+		eFigureType.Pawn => new Pawn(),
+		eFigureType.Rock => new Rock(),
+		eFigureType.Bishop => new Bishop(),
+		eFigureType.Knight => new Knight(),
+		eFigureType.Queen => new Queen(),
+		eFigureType.King => new King(),
+		_ => throw new InvalidOperationException("Invalid figure type")
+	};
 }
