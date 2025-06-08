@@ -6,18 +6,20 @@ namespace Api.Hubs;
 
 public interface IMatchmakingHub
 {
-	Task WaitingForMatch();
+	Task WaitingForMatch(string player);
 
-	Task MatchFound(Match match);
+	Task MatchFound(Match match, string player);
 
 	Task Conceded();
 
 	Task Victory();
 
 	Task Cancelled();
+
+	Task Moved(Match match);
 }
 
-public class MatchmakingHub(MatchTracker matchTracker) : Hub<IMatchmakingHub>
+public class MatchmakingHub(MatchTracker matchTracker, BoardTracker boardTracker) : Hub<IMatchmakingHub>
 {
 	public async Task FindMatch()
 	{
@@ -27,11 +29,11 @@ public class MatchmakingHub(MatchTracker matchTracker) : Hub<IMatchmakingHub>
 
 		if (match == null)
 		{
-			await Clients.Client(player).WaitingForMatch();
+			await Clients.Client(player).WaitingForMatch(player);
 		}
 		else
 		{
-			await Clients.Clients(player, opponent!).MatchFound(match);
+			await Clients.Clients(player, opponent!).MatchFound(match, player);
 		}
 	}
 
@@ -61,5 +63,17 @@ public class MatchmakingHub(MatchTracker matchTracker) : Hub<IMatchmakingHub>
 		matchTracker.TryCancelMatchmaking(player);
 
 		await Clients.Client(player).Cancelled();
+	}
+
+	public async Task Move(Match match, Figure movedFigure, string newPosition)
+	{
+		// Validate move
+
+		// Process move
+		boardTracker.MoveFigure(match, movedFigure, newPosition);
+
+		// Send back updated match details
+
+		await Clients.Clients(match.PlayerBlack, match.PlayerWhite).Moved(match);
 	}
 }

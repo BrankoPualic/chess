@@ -41,4 +41,16 @@ public class BoardTracker
 
 		return board;
 	}
+
+	public void MoveFigure(Match match, Figure movedFigure, string newPosition)
+	{
+		var board = match.Board;
+		var previousFigureState = board.Where(_ => _.Type == movedFigure.Type && _.Color == movedFigure.Color && _.Position == movedFigure.Position).FirstOrDefault();
+
+		if (previousFigureState == null)
+			throw new InvalidOperationException("Figure doesn't exist");
+
+		previousFigureState.Position = newPosition;
+		match.PlayerTurn = match.PlayerTurn == ePlayerColor.White ? ePlayerColor.Black : ePlayerColor.White;
+	}
 }

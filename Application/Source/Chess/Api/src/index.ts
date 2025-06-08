@@ -10,27 +10,40 @@ import matchHtml from "./pages/match.html";
 import { ePlayerColor, eFigureType } from "./enumerators";
 import { Match, Figure } from "./models";
 
+const matchmakingConnection = new signalR.HubConnectionBuilder()
+    .withUrl('/hub/matchmaking')
+    .build();
+
 $(() => {
     routing();
     signalr_Matchmaking();
 });
 
 let currentMatch: Match;
+let playerId: string;
+let selectedFigure: Figure;
 
 function signalr_Matchmaking(): void {
-    const matchmakingConnection = new signalR.HubConnectionBuilder()
-        .withUrl('/hub/matchmaking')
-        .build();
-
     $('#start').on('click', () => matchmakingConnection.send('findMatch'));
     $(document).on('click', '#cancel', () => matchmakingConnection.send('cancel'));
 
-    matchmakingConnection.on('waitingForMatch', () => page('/queue'));
-    matchmakingConnection.on('matchFound', (match: Match) => {
+    matchmakingConnection.on('waitingForMatch', (player: string) => {
+        playerId = player;
+        page('/queue')
+    });
+    matchmakingConnection.on('matchFound', (match: Match, player: string) => {
         currentMatch = match;
+        if (!playerId)
+            playerId = player;
+
         page('/match')
     });
     matchmakingConnection.on('cancelled', () => page('/'));
+
+    matchmakingConnection.on('moved', (match: Match) => {
+        currentMatch = match;
+        board_Init()
+    });
 
     matchmakingConnection.start().catch((err) => console.error(err));
 }
@@ -78,8 +91,8 @@ function board_Init(): void {
             const figure = boardMap.get(pos);
             const html = getBoardFigureHtml(figure);
 
-            body += `<td id="col_${colChar}" class="column ${colorClass}">
-                        <span class="board-figure">${html}</span>
+            body += `<td id="col_${pos}" class="column ${colorClass}">
+                        <span class="board-figure" data-type="${figure?.type}" data-color="${figure?.color}">${html}</span>
                     </td>`;
         }
 
@@ -88,6 +101,49 @@ function board_Init(): void {
 
     body += `</tbody></table>`;
     container.html(body);
+
+    $('.column').each((i, el) => {
+        el.addEventListener('click', () => {
+            const selected = $('.selected');
+            if (!selected)
+                return;
+
+            const figure = currentMatch.board.find(_ => _.position == selected.attr('id').split('_')[1]);
+            const newPosition = el.id.split('_')[1];
+            matchmakingConnection.send('move', currentMatch, figure, newPosition);
+
+            $('.selected').removeClass('selected');
+        })
+    })
+
+    $('.board-figure').each((i, el) => {
+        const dataset = el.dataset;
+        const figureType = Number(dataset['type']);
+        const figureColor = Number(dataset['color']);
+        const playerColor = playerId === currentMatch.playerWhite ? ePlayerColor.White : ePlayerColor.Black;
+
+        if (figureColor != playerColor) {
+            el.classList.add('opponent-figure');
+            return;
+        }
+        else {
+            el.classList.add('my-figure');
+        }
+
+        const figure = currentMatch.board.find(_ => _.color == figureColor && _.type == figureType);
+        if (!figure)
+            return;
+
+        el.addEventListener('click', (e) => {
+            if (playerColor !== currentMatch.playerTurn)
+                return;
+
+            $('.selected').removeClass('selected');
+            el.parentElement.classList.add('selected');
+            selectedFigure = figure;
+            e.stopPropagation();
+        });
+    })
 }
 
 const FigureHtml: Record<ePlayerColor, Record<eFigureType, string>> = {
