@@ -59,3 +59,7 @@ td.column.light-cell {
 td.column.dark-cell {
     background-color: green;
 }
+
+.board-figure {
+    font-size: 2.5rem;
+}
