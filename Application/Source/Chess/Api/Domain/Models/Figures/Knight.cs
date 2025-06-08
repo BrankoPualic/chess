@@ -6,8 +6,8 @@ public class Knight : Figure
 
 	public override bool IsValidMove(List<Figure> board, Figure figure, string newPosition, Figure lastMovedFigure = null)
 	{
-		var (oldRow, oldCol) = (figure.Position.Last(), figure.Position.First());
-		var (newRow, newCol) = (newPosition.Last(), newPosition.First());
+		var (oldRow, oldCol) = (figure.Position.Last() - '0', figure.Position.First());
+		var (newRow, newCol) = (newPosition.Last() - '0', newPosition.First());
 
 		var validMoves = new[]
 		{
