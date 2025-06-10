@@ -35,9 +35,9 @@ function signalr_Matchmaking() {
         (0, page_1.default)('/match');
     });
     matchmakingConnection.on('cancelled', function () { return (0, page_1.default)('/'); });
-    matchmakingConnection.on('moved', function (match) {
+    matchmakingConnection.on('moved', function (match, movedFigure) {
         currentMatch = match;
-        lastMovedFigure = selectedFigure;
+        lastMovedFigure = movedFigure;
         board_Init();
     });
     matchmakingConnection.start().catch(function (err) { return console.error(err); });

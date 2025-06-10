@@ -6,8 +6,8 @@ public class Queen : Figure
 
 	public override bool IsValidMove(List<Figure> board, string newPosition, Figure lastMovedFigure = null)
 	{
-		var (oldRow, oldCol) = (Position.Last(), Position.First());
-		var (newRow, newCol) = (newPosition.Last(), newPosition.First());
+		var (oldCol, oldRow) = Position;
+		var (newCol, newRow) = newPosition;
 
 		// Check that the move is strictly vertical, horizontal or diagonal
 		if (oldRow != newRow && oldCol != newCol && Math.Abs(oldCol - newCol) != Math.Abs(oldRow - newRow))

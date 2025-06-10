@@ -6,8 +6,8 @@ public class King : Figure
 
 	public override bool IsValidMove(List<Figure> board, string newPosition, Figure lastMovedFigure = null)
 	{
-		var (oldRow, oldCol) = (Position.Last(), Position.First());
-		var (newRow, newCol) = (newPosition.Last(), newPosition.First());
+		var (oldCol, oldRow) = Position;
+		var (newCol, newRow) = newPosition;
 
 		int rowDiff = Math.Abs(oldRow - newRow);
 		int colDiff = Math.Abs(oldCol - newCol);

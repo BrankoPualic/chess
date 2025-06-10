@@ -1,6 +1,4 @@
-﻿using Api.Domain.Models;
-using Api.Dtos;
-using Api.Hubs.Requests;
+﻿using Api.Hubs.Requests;
 using Api.Hubs.Trackers;
 using Microsoft.AspNetCore.SignalR;
 
@@ -18,7 +16,7 @@ public interface IMatchmakingHub
 
 	Task Cancelled();
 
-	Task Moved(MatchDto match);
+	Task Moved(MatchDto match, FigureDto movedFigure);
 }
 
 public class MatchmakingHub(MatchTracker matchTracker, BoardTracker boardTracker) : Hub<IMatchmakingHub>
@@ -74,6 +72,6 @@ public class MatchmakingHub(MatchTracker matchTracker, BoardTracker boardTracker
 
 		boardTracker.MoveFigure(request);
 
-		await Clients.Clients(request.Match.PlayerBlack, request.Match.PlayerWhite).Moved(request.Match);
+		await Clients.Clients(request.Match.PlayerBlack, request.Match.PlayerWhite).Moved(request.Match, request.MovedFigure);
 	}
 }

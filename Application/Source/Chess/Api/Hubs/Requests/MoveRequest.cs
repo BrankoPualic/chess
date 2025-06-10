@@ -1,6 +1,4 @@
-﻿using Api.Dtos;
-
-namespace Api.Hubs.Requests;
+﻿namespace Api.Hubs.Requests;
 
 public class MoveRequest
 {

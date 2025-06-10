@@ -1,8 +1,4 @@
-﻿using Api.Domain;
-using Api.Domain.Models.Figures;
-using Api.Dtos;
-using Api.Extensions;
-using Api.Hubs.Requests;
+﻿using Api.Hubs.Requests;
 
 namespace Api.Hubs.Trackers;
 
@@ -49,8 +45,26 @@ public class BoardTracker
 		if (figureOnBoard == null)
 			throw new InvalidOperationException("Figure doesn't exist");
 
+		// Capture by En Passant
+		if (request.MovedFigure.Type == eFigureType.Pawn &&
+		  (request.MovedFigure.ToModel() as Pawn).IsEnPassantMove(request.NewPosition, request.LastMovedFigure?.ToModel()))
+		{
+			var enPassantTarget = request.Match.Board.FirstOrDefault(_ => _.Position == request.LastMovedFigure.Position);
+
+			if (enPassantTarget != null)
+				request.Match.CaptureFigure(enPassantTarget);
+		}
+
+		// Capture by position
+		var figureCaptured = request.Match.Board.FirstOrDefault(_ => _.Position == request.NewPosition && _.Color != request.MovedFigure.Color);
+		if (figureCaptured != null)
+			request.Match.CaptureFigure(figureCaptured);
+
 		figureOnBoard.PreviousPosition = figureOnBoard.Position;
 		figureOnBoard.Position = request.NewPosition;
+
+		request.MovedFigure.PreviousPosition = figureOnBoard.PreviousPosition;
+		request.MovedFigure.Position = request.NewPosition;
 
 		request.Match.PlayerTurn = request.Match.PlayerTurn == ePlayerColor.White
 			? ePlayerColor.Black

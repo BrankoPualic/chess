@@ -41,9 +41,9 @@ function signalr_Matchmaking(): void {
     });
     matchmakingConnection.on('cancelled', () => page('/'));
 
-    matchmakingConnection.on('moved', (match: MatchDto) => {
+    matchmakingConnection.on('moved', (match: MatchDto, movedFigure: FigureDto) => {
         currentMatch = match;
-        lastMovedFigure = selectedFigure;
+        lastMovedFigure = movedFigure;
         board_Init()
     });
 

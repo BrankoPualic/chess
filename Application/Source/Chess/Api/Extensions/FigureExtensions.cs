@@ -1,8 +1,4 @@
-﻿using Api.Domain;
-using Api.Domain.Models.Figures;
-using Api.Dtos;
-
-namespace Api.Extensions;
+﻿namespace Api.Extensions;
 
 public static class FigureExtensions
 {
@@ -18,13 +14,13 @@ public static class FigureExtensions
 		_ => throw new InvalidOperationException("Invalid figure type")
 	};
 
-	public static Figure ToModel(this FigureDto dto)
+	public static Figure ToModel(this FigureDto data)
 	{
-		var model = GetFigureInstance(dto.Type);
-		model.Id = dto.Id;
-		model.Color = dto.Color;
-		model.Position = dto.Position;
-		model.PreviousPosition = dto.PreviousPosition;
+		var model = GetFigureInstance(data.Type);
+		model.Id = data.Id;
+		model.Color = data.Color;
+		model.Position = data.Position;
+		model.PreviousPosition = data.PreviousPosition;
 		return model;
 	}
 
