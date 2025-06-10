@@ -4,9 +4,9 @@ public class Rook : Figure
 {
 	public override eFigureType Type => eFigureType.Rook;
 
-	public override bool IsValidMove(List<Figure> board, Figure figure, string newPosition, Figure lastMovedFigure = null)
+	public override bool IsValidMove(List<Figure> board, string newPosition, Figure lastMovedFigure = null)
 	{
-		var (oldRow, oldCol) = (figure.Position.Last(), figure.Position.First());
+		var (oldRow, oldCol) = (Position.Last(), Position.First());
 		var (newRow, newCol) = (newPosition.Last(), newPosition.First());
 
 		// Check that the move is strictly vertical or horizontal
@@ -28,6 +28,6 @@ public class Rook : Figure
 			return false;
 
 		// Check if target square is occupied by a friendly piece
-		return !IsTargetOfTheSameColor(board, figure, newPosition);
+		return !IsTargetOfTheSameColor(board, newPosition);
 	}
 }

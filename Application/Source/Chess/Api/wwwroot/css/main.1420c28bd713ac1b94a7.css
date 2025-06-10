@@ -46,17 +46,17 @@ body {
         border: 1px solid black;
     }
 
-#board tr td.column {
+#board tr td.cell {
     width: 75px;
     height: 75px;
     text-align: center;
 }
 
-td.column.light-cell {
+td.cell.light-cell {
     background-color: lightgoldenrodyellow;
 }
 
-td.column.dark-cell {
+td.cell.dark-cell {
     background-color: green;
 }
 

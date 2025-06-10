@@ -4,14 +4,13 @@ public class Pawn : Figure
 {
 	public override eFigureType Type => eFigureType.Pawn;
 
-	public override bool IsValidMove(List<Figure> board, Figure figure, string newPosition, Figure lastMovedFigure = null)
+	public override bool IsValidMove(List<Figure> board, string newPosition, Figure lastMovedFigure = null)
 	{
-		var (oldRow, oldCol) = (figure.Position.Last(), figure.Position.First());
+		var (oldRow, oldCol) = (Position.Last(), Position.First());
 		var (newRow, newCol) = (newPosition.Last(), newPosition.First());
-		var color = figure.Color;
 
-		int direction = color == ePlayerColor.White ? 1 : -1;
-		int startRow = color == ePlayerColor.White ? 2 : 7;
+		int direction = Color == ePlayerColor.White ? 1 : -1;
+		int startRow = Color == ePlayerColor.White ? 2 : 7;
 
 		// Forward move
 		if (newCol == oldCol)
@@ -19,7 +18,7 @@ public class Pawn : Figure
 			if (newRow == oldRow + direction && board.All(_ => _.Position != newPosition))
 				return true;
 
-			if (oldRow == startRow && newRow == oldRow + 2 * direction &&
+			if (oldRow - '0' == startRow && newRow == oldRow + 2 * direction &&
 				board.All(_ => _.Position != newPosition) &&
 				board.All(_ => _.Position != $"{oldCol}{oldRow + direction}"))
 				return true;
@@ -32,13 +31,13 @@ public class Pawn : Figure
 		{
 			// Regular capture
 			var target = board.FirstOrDefault(_ => _.Position == newPosition);
-			if (target != null && target.Color != color)
+			if (target != null && target.Color != Color)
 				return true;
 
 			// En passant
 			if (lastMovedFigure != null &&
 				lastMovedFigure.Type == eFigureType.Pawn &&
-				lastMovedFigure.Color != color &&
+				lastMovedFigure.Color != Color &&
 				lastMovedFigure.Position == $"{newCol}{oldRow}" && // beside this pawn
 				Math.Abs(lastMovedFigure.Position.Last() - oldRow) == 0 && // same row
 				lastMovedFigure.PreviousPosition.Last() - lastMovedFigure.Position.Last() == 2 * direction) // moved 2

@@ -1,15 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Match = exports.Figure = void 0;
-var Figure = /** @class */ (function () {
-    function Figure() {
+exports.MoveRequest = exports.MatchDto = exports.FigureDto = void 0;
+var FigureDto = /** @class */ (function () {
+    function FigureDto() {
     }
-    return Figure;
+    return FigureDto;
 }());
-exports.Figure = Figure;
-var Match = /** @class */ (function () {
-    function Match() {
+exports.FigureDto = FigureDto;
+var MatchDto = /** @class */ (function () {
+    function MatchDto() {
     }
-    return Match;
+    return MatchDto;
 }());
-exports.Match = Match;
+exports.MatchDto = MatchDto;
+var MoveRequest = /** @class */ (function () {
+    function MoveRequest(match, movedFigure, newPosition, lastMovedFigure) {
+        this.match = match;
+        this.movedFigure = movedFigure;
+        this.newPosition = newPosition;
+        this.lastMovedFigure = lastMovedFigure;
+    }
+    return MoveRequest;
+}());
+exports.MoveRequest = MoveRequest;

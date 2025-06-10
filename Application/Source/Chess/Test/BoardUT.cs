@@ -1,12 +1,12 @@
 ﻿using Api.Domain;
-using Api.Domain.Models.Figures;
+using Api.Dtos;
 using Api.Hubs.Trackers;
 
 namespace Test;
 
 public class BoardUT
 {
-	private List<Figure> _board = [];
+	private List<FigureDto> _board = [];
 	private BoardTracker _boardTracker;
 
 	[SetUp]

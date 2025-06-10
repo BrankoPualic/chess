@@ -18,63 +18,86 @@ public class FigureMovementsUT
 	public void Pawn_ValidMove_ForwardOneStep()
 	{
 		var pawn = new Pawn { Color = ePlayerColor.White, Position = "e2" };
-		Assert.That(pawn.IsValidMove(_emptyBoard, pawn, "e3"), Is.True);
+		Assert.That(pawn.IsValidMove(_emptyBoard, "e3"), Is.True);
+	}
+
+	[Test]
+	public void Pawn_ValidMove_ForwardTwoStep()
+	{
+		var pawn = new Pawn { Color = ePlayerColor.White, Position = "e2" };
+		Assert.That(pawn.IsValidMove(_emptyBoard, "e4"), Is.True);
 	}
 
 	[Test]
 	public void Pawn_InvalidMove_Backwards()
 	{
 		var pawn = new Pawn { Color = ePlayerColor.White, Position = "e2" };
-		Assert.That(pawn.IsValidMove(_emptyBoard, pawn, "e1"), Is.False);
+		Assert.That(pawn.IsValidMove(_emptyBoard, "e1"), Is.False);
+	}
+
+	[Test]
+	public void Pawn_ValidEnPassantCapture()
+	{
+		var whitePawn = new Pawn { Color = ePlayerColor.White, Position = "e5" };
+		var blackPawn = new Pawn { Color = ePlayerColor.Black, Position = "d5", PreviousPosition = "d7" };
+
+		var board = new List<Figure> { whitePawn, blackPawn };
+
+		var lastMoved = blackPawn;
+
+		// White pawn captures en passant on d6
+		var isValid = whitePawn.IsValidMove(board, "d6", lastMoved);
+
+		Assert.That(isValid, Is.True);
 	}
 
 	[Test]
 	public void Knight_ValidMove_LShape()
 	{
 		var knight = new Knight { Color = ePlayerColor.White, Position = "g1" };
-		Assert.That(knight.IsValidMove(_emptyBoard, knight, "f3"), Is.True);
+		Assert.That(knight.IsValidMove(_emptyBoard, "f3"), Is.True);
 	}
 
 	[Test]
 	public void Knight_InvalidMove_Straight()
 	{
 		var knight = new Knight { Color = ePlayerColor.White, Position = "g1" };
-		Assert.That(knight.IsValidMove(_emptyBoard, knight, "g3"), Is.False);
+		Assert.That(knight.IsValidMove(_emptyBoard, "g3"), Is.False);
 	}
 
 	[Test]
 	public void Bishop_ValidMove_Diagonal()
 	{
 		var bishop = new Bishop { Color = ePlayerColor.White, Position = "c1" };
-		Assert.That(bishop.IsValidMove(_emptyBoard, bishop, "g5"), Is.True);
+		Assert.That(bishop.IsValidMove(_emptyBoard, "g5"), Is.True);
 	}
 
 	[Test]
 	public void Bishop_InvalidMove_Straight()
 	{
 		var bishop = new Bishop { Color = ePlayerColor.White, Position = "c1" };
-		Assert.That(bishop.IsValidMove(_emptyBoard, bishop, "c4"), Is.False);
+		Assert.That(bishop.IsValidMove(_emptyBoard, "c4"), Is.False);
 	}
 
 	[Test]
 	public void Queen_ValidMove_Horizontal()
 	{
 		var queen = new Queen { Color = ePlayerColor.White, Position = "d1" };
-		Assert.That(queen.IsValidMove(_emptyBoard, queen, "h1"), Is.True);
+		Assert.That(queen.IsValidMove(_emptyBoard, "h1"), Is.True);
 	}
 
 	[Test]
 	public void Queen_ValidMove_Diagonal()
 	{
 		var queen = new Queen { Color = ePlayerColor.White, Position = "d1" };
-		Assert.That(queen.IsValidMove(_emptyBoard, queen, "h5"), Is.True);
+		Assert.That(queen.IsValidMove(_emptyBoard, "h5"), Is.True);
 	}
 
 	[Test]
 	public void Queen_InvalidMove_LShape()
 	{
 		var queen = new Queen { Color = ePlayerColor.White, Position = "d1" };
-		Assert.That(queen.IsValidMove(_emptyBoard, queen, "e3"), Is.False);
+		Assert.That(queen.IsValidMove(_emptyBoard, "e3"), Is.False);
 	}
 
 	[Test]
@@ -83,9 +106,9 @@ public class FigureMovementsUT
 		var king = new King { Color = ePlayerColor.White, Position = "e1" };
 		Assert.Multiple(() =>
 		{
-			Assert.That(king.IsValidMove(_emptyBoard, king, "e2"), Is.True);
-			Assert.That(king.IsValidMove(_emptyBoard, king, "d1"), Is.True);
-			Assert.That(king.IsValidMove(_emptyBoard, king, "f2"), Is.True);
+			Assert.That(king.IsValidMove(_emptyBoard, "e2"), Is.True);
+			Assert.That(king.IsValidMove(_emptyBoard, "d1"), Is.True);
+			Assert.That(king.IsValidMove(_emptyBoard, "f2"), Is.True);
 		});
 	}
 
@@ -93,7 +116,7 @@ public class FigureMovementsUT
 	public void King_InvalidMove_TwoSteps()
 	{
 		var king = new King { Color = ePlayerColor.White, Position = "e1" };
-		Assert.That(king.IsValidMove(_emptyBoard, king, "e3"), Is.False);
+		Assert.That(king.IsValidMove(_emptyBoard, "e3"), Is.False);
 	}
 
 	[Test]
@@ -104,8 +127,8 @@ public class FigureMovementsUT
 
 		Assert.Multiple(() =>
 		{
-			Assert.That(rook.IsValidMove(board, rook, "d7"), Is.True);
-			Assert.That(rook.IsValidMove(board, rook, "d1"), Is.True);
+			Assert.That(rook.IsValidMove(board, "d7"), Is.True);
+			Assert.That(rook.IsValidMove(board, "d1"), Is.True);
 		});
 	}
 
@@ -117,8 +140,8 @@ public class FigureMovementsUT
 
 		Assert.Multiple(() =>
 		{
-			Assert.That(rook.IsValidMove(board, rook, "e5"), Is.False);
-			Assert.That(rook.IsValidMove(board, rook, "c3"), Is.False);
+			Assert.That(rook.IsValidMove(board, "e5"), Is.False);
+			Assert.That(rook.IsValidMove(board, "c3"), Is.False);
 		});
 	}
 
@@ -129,7 +152,7 @@ public class FigureMovementsUT
 		var blockingPawn = new Pawn { Position = "d5", Color = ePlayerColor.White };
 		var board = new List<Figure> { rook, blockingPawn };
 
-		Assert.That(rook.IsValidMove(board, rook, "d6"), Is.False);
+		Assert.That(rook.IsValidMove(board, "d6"), Is.False);
 	}
 
 	[Test]
@@ -139,7 +162,7 @@ public class FigureMovementsUT
 		var enemyPawn = new Pawn { Position = "d7", Color = ePlayerColor.Black };
 		var board = new List<Figure> { rook, enemyPawn };
 
-		Assert.That(rook.IsValidMove(board, rook, "d7"), Is.True);
+		Assert.That(rook.IsValidMove(board, "d7"), Is.True);
 	}
 
 	[Test]
@@ -149,6 +172,6 @@ public class FigureMovementsUT
 		var friendlyPawn = new Pawn { Position = "d7", Color = ePlayerColor.White };
 		var board = new List<Figure> { rook, friendlyPawn };
 
-		Assert.That(rook.IsValidMove(board, rook, "d7"), Is.False);
+		Assert.That(rook.IsValidMove(board, "d7"), Is.False);
 	}
 }

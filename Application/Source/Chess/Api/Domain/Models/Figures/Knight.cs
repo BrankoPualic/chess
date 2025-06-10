@@ -4,9 +4,9 @@ public class Knight : Figure
 {
 	public override eFigureType Type => eFigureType.Knight;
 
-	public override bool IsValidMove(List<Figure> board, Figure figure, string newPosition, Figure lastMovedFigure = null)
+	public override bool IsValidMove(List<Figure> board, string newPosition, Figure lastMovedFigure = null)
 	{
-		var (oldRow, oldCol) = (figure.Position.Last() - '0', figure.Position.First());
+		var (oldRow, oldCol) = (Position.Last() - '0', Position.First());
 		var (newRow, newCol) = (newPosition.Last() - '0', newPosition.First());
 
 		var validMoves = new[]
@@ -24,6 +24,6 @@ public class Knight : Figure
 		if (!validMoves.Contains(newPosition))
 			return false;
 
-		return !IsTargetOfTheSameColor(board, figure, newPosition);
+		return !IsTargetOfTheSameColor(board, newPosition);
 	}
 }

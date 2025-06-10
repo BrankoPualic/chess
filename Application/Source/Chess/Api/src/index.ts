@@ -8,7 +8,7 @@ import queueHtml from "./pages/queue.html";
 import matchHtml from "./pages/match.html";
 
 import { ePlayerColor, eFigureType } from "./enumerators";
-import { Match, Figure } from "./models";
+import { MatchDto, FigureDto, MoveRequest } from "./models";
 
 const matchmakingConnection = new signalR.HubConnectionBuilder()
     .withUrl('/hub/matchmaking')
@@ -19,9 +19,10 @@ $(() => {
     signalr_Matchmaking();
 });
 
-let currentMatch: Match;
+let currentMatch: MatchDto;
 let playerId: string;
-let selectedFigure: Figure;
+let selectedFigure: FigureDto;
+let lastMovedFigure: FigureDto = null;
 
 function signalr_Matchmaking(): void {
     $('#start').on('click', () => matchmakingConnection.send('findMatch'));
@@ -31,7 +32,7 @@ function signalr_Matchmaking(): void {
         playerId = player;
         page('/queue')
     });
-    matchmakingConnection.on('matchFound', (match: Match, player: string) => {
+    matchmakingConnection.on('matchFound', (match: MatchDto, player: string) => {
         currentMatch = match;
         if (!playerId)
             playerId = player;
@@ -40,8 +41,9 @@ function signalr_Matchmaking(): void {
     });
     matchmakingConnection.on('cancelled', () => page('/'));
 
-    matchmakingConnection.on('moved', (match: Match) => {
+    matchmakingConnection.on('moved', (match: MatchDto) => {
         currentMatch = match;
+        lastMovedFigure = selectedFigure;
         board_Init()
     });
 
@@ -75,6 +77,12 @@ function view_RenderMatch(): void {
 // Board
 
 function board_Init(): void {
+    board_Render();
+    cell_Process();
+    figure_Process();
+}
+
+function board_Render(): void {
     const container = $(`#board`);
     const boardMap = new Map(currentMatch.board.map(_ => [_.position, _]));
 
@@ -91,7 +99,7 @@ function board_Init(): void {
             const figure = boardMap.get(pos);
             const html = getBoardFigureHtml(figure);
 
-            body += `<td id="col_${pos}" class="column ${colorClass}">
+            body += `<td id="col_${pos}" class="cell ${colorClass}">
                         <span class="board-figure" data-type="${figure?.type}" data-color="${figure?.color}">${html}</span>
                     </td>`;
         }
@@ -101,21 +109,9 @@ function board_Init(): void {
 
     body += `</tbody></table>`;
     container.html(body);
+}
 
-    $('.column').each((i, el) => {
-        el.addEventListener('click', () => {
-            const selected = $('.selected');
-            if (!selected)
-                return;
-
-            const figure = currentMatch.board.find(_ => _.position == selected.attr('id').split('_')[1]);
-            const newPosition = el.id.split('_')[1];
-            matchmakingConnection.send('move', currentMatch, figure, newPosition);
-
-            $('.selected').removeClass('selected');
-        })
-    })
-
+function figure_Process(): void {
     $('.board-figure').each((i, el) => {
         const dataset = el.dataset;
         const figureType = Number(dataset['type']);
@@ -146,6 +142,24 @@ function board_Init(): void {
     })
 }
 
+function cell_Process(): void {
+    $('.cell').each((i, el) => {
+        el.addEventListener('click', () => {
+            const selected = $('.selected');
+            if (!selected)
+                return;
+
+            const figure = currentMatch.board.find(_ => _.position == selected.attr('id').split('_')[1]);
+            const newPosition = el.id.split('_')[1];
+            const moveRequest = new MoveRequest(currentMatch, figure, newPosition, lastMovedFigure);
+            matchmakingConnection.invoke('Move', moveRequest)
+                .catch(_ => console.error(_));
+
+            $('.selected').removeClass('selected');
+        })
+    })
+}
+
 const FigureHtml: Record<ePlayerColor, Record<eFigureType, string>> = {
     [ePlayerColor.White]: {
         [eFigureType.Pawn]: '&#9817;',
@@ -165,6 +179,6 @@ const FigureHtml: Record<ePlayerColor, Record<eFigureType, string>> = {
     }
 };
 
-function getBoardFigureHtml(figure: Figure | undefined): string {
+function getBoardFigureHtml(figure: FigureDto | undefined): string {
     return figure ? FigureHtml[figure.color]?.[figure.type] ?? '' : '';
 }

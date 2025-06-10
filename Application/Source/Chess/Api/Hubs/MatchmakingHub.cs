@@ -1,5 +1,6 @@
 ﻿using Api.Domain.Models;
-using Api.Domain.Models.Figures;
+using Api.Dtos;
+using Api.Hubs.Requests;
 using Api.Hubs.Trackers;
 using Microsoft.AspNetCore.SignalR;
 
@@ -9,7 +10,7 @@ public interface IMatchmakingHub
 {
 	Task WaitingForMatch(string player);
 
-	Task MatchFound(Match match, string player);
+	Task MatchFound(MatchDto match, string player);
 
 	Task Conceded();
 
@@ -17,7 +18,7 @@ public interface IMatchmakingHub
 
 	Task Cancelled();
 
-	Task Moved(Match match);
+	Task Moved(MatchDto match);
 }
 
 public class MatchmakingHub(MatchTracker matchTracker, BoardTracker boardTracker) : Hub<IMatchmakingHub>
@@ -66,16 +67,13 @@ public class MatchmakingHub(MatchTracker matchTracker, BoardTracker boardTracker
 		await Clients.Client(player).Cancelled();
 	}
 
-	public async Task Move(Match match, Figure movedFigure, string newPosition, Figure lastMovedFigure = null)
+	public async Task Move(MoveRequest request)
 	{
-		// Validate move
-		if (!boardTracker.IsValidMove(match.Board, movedFigure, newPosition, lastMovedFigure))
+		if (!boardTracker.IsValidMove(request))
 			throw new InvalidOperationException("Your move is invalid");
 
-		// Process move
-		boardTracker.MoveFigure(match, movedFigure, newPosition);
+		boardTracker.MoveFigure(request);
 
-		// Send back updated match details
-		await Clients.Clients(match.PlayerBlack, match.PlayerWhite).Moved(match);
+		await Clients.Clients(request.Match.PlayerBlack, request.Match.PlayerWhite).Moved(request.Match);
 	}
 }

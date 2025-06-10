@@ -1,17 +1,19 @@
 ﻿using Api.Domain;
-using Api.Domain.Models;
 using Api.Domain.Models.Figures;
+using Api.Dtos;
+using Api.Extensions;
+using Api.Hubs.Requests;
 
 namespace Api.Hubs.Trackers;
 
 public class BoardTracker
 {
-	public List<Figure> InitializeBoard()
+	public List<FigureDto> InitializeBoard()
 	{
 		var rows = new int[] { 1, 2, 7, 8 };
 		var cols = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 
-		var board = new List<Figure>();
+		var board = new List<FigureDto>();
 
 		foreach (var row in rows)
 		{
@@ -33,40 +35,31 @@ public class BoardTracker
 				figure.Position = $"{col}{row}";
 				figure.PreviousPosition = $"{col}{row}";
 
-				board.Add(figure);
+				board.Add(figure.ToDto());
 			}
 		}
 
 		return board;
 	}
 
-	public void MoveFigure(Match match, Figure movedFigure, string newPosition)
+	public void MoveFigure(MoveRequest request)
 	{
-		var figureOnBoard = match.Board.FirstOrDefault(_ => _.Id == movedFigure.Id);
+		var figureOnBoard = request.Match.Board.FirstOrDefault(_ => _.Id == request.MovedFigure.Id);
 
 		if (figureOnBoard == null)
 			throw new InvalidOperationException("Figure doesn't exist");
 
 		figureOnBoard.PreviousPosition = figureOnBoard.Position;
-		figureOnBoard.Position = newPosition;
+		figureOnBoard.Position = request.NewPosition;
 
-		match.PlayerTurn = match.PlayerTurn == ePlayerColor.White
+		request.Match.PlayerTurn = request.Match.PlayerTurn == ePlayerColor.White
 			? ePlayerColor.Black
 			: ePlayerColor.White;
 	}
 
-	public bool IsValidMove(List<Figure> board, Figure movedFigure, string newPosition, Figure lastMovedFigure = null)
-		=> GetFigureInstance(movedFigure.Type).IsValidMove(board, movedFigure, newPosition, lastMovedFigure);
-
-	public static Figure GetFigureInstance(eFigureType type)
-		=> type switch
-		{
-			eFigureType.Pawn => new Pawn(),
-			eFigureType.Rook => new Rook(),
-			eFigureType.Bishop => new Bishop(),
-			eFigureType.Knight => new Knight(),
-			eFigureType.Queen => new Queen(),
-			eFigureType.King => new King(),
-			_ => throw new InvalidOperationException("Invalid figure type")
-		};
+	public bool IsValidMove(MoveRequest request) => request.MovedFigure.ToModel().IsValidMove(
+		request.Match.Board.Select(_ => _.ToModel()).ToList(),
+		request.NewPosition,
+		request.LastMovedFigure?.ToModel()
+	);
 }

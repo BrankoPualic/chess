@@ -12,12 +12,12 @@ public abstract class Figure
 
 	public string PreviousPosition { get; set; }
 
-	public abstract bool IsValidMove(List<Figure> board, Figure figure, string newPosition, Figure lastMovedFigure = null);
+	public abstract bool IsValidMove(List<Figure> board, string newPosition, Figure lastMovedFigure = null);
 
-	protected bool IsTargetOfTheSameColor(List<Figure> board, Figure figure, string newPosition)
+	protected bool IsTargetOfTheSameColor(List<Figure> board, string newPosition)
 	{
 		var targetFigure = board.FirstOrDefault(_ => _.Position == newPosition);
-		return targetFigure != null && targetFigure.Color == figure.Color;
+		return targetFigure != null && targetFigure.Color == Color;
 	}
 
 	protected bool HasObstruction(List<Figure> board, int rowStep, int colStep, int startRow, int endRow, int startCol, int endCol)

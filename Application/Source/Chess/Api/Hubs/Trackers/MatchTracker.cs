@@ -1,5 +1,5 @@
 ﻿using Api.Domain;
-using Api.Domain.Models;
+using Api.Dtos;
 using System.Collections.Concurrent;
 
 namespace Api.Hubs.Trackers;
@@ -8,11 +8,11 @@ public class MatchTracker(BoardTracker boardTracker)
 {
 	private static readonly LinkedList<string> _queue = [];
 	private static readonly Lock _queueLock = new();
-	private static readonly ConcurrentDictionary<Guid, Match> _matches = [];
+	private static readonly ConcurrentDictionary<Guid, MatchDto> _matches = [];
 	private static readonly Random _random = new();
 	private static readonly Lock _randomLock = new();
 
-	public bool TryMatchPlayer(string connectionId, out Match? match, out string? opponent)
+	public bool TryMatchPlayer(string connectionId, out MatchDto? match, out string? opponent)
 	{
 		lock (_queueLock)
 		{
@@ -40,7 +40,7 @@ public class MatchTracker(BoardTracker boardTracker)
 			whiteFirst = _random.Next(2) == 0;
 		}
 
-		match = new Match
+		match = new()
 		{
 			Id = Guid.NewGuid(),
 			PlayerWhite = whiteFirst ? opponent : connectionId,
