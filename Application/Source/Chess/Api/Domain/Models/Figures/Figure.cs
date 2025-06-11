@@ -14,6 +14,19 @@ public abstract class Figure
 
 	public abstract bool IsValidMove(List<Figure> board, string newPosition, Figure lastMovedFigure = null);
 
+	public bool IsKingInCheckAfterMove(List<Figure> board, string newPosition)
+	{
+		var clonedBoard = board.Select(_ => _.MemberwiseClone() as Figure).ToList();
+		var figureToMove = clonedBoard.First(_ => _.Id == Id);
+		figureToMove.PreviousPosition = figureToMove.Position;
+		figureToMove.Position = newPosition;
+
+		clonedBoard.RemoveAll(_ => _.Position == newPosition && _.Color != figureToMove.Color);
+
+		var king = clonedBoard.FirstOrDefault(_ => _.Type == eFigureType.King && _.Color == Color);
+		return clonedBoard.Any(_ => _.Color != king.Color && _.IsValidMove(clonedBoard, king.Position, null));
+	}
+
 	protected bool IsTargetOfTheSameColor(List<Figure> board, string newPosition)
 	{
 		var targetFigure = board.FirstOrDefault(_ => _.Position == newPosition);

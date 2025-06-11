@@ -174,4 +174,51 @@ public class FigureMovementsUT
 
 		Assert.That(rook.IsValidMove(board, "d7"), Is.False);
 	}
+
+	[Test]
+	public void King_PawnExposeKingToCheck()
+	{
+		var friendlyPawn = new Pawn { Id = Guid.NewGuid(), Position = "d2", Color = ePlayerColor.White };
+		var king = new King { Id = Guid.NewGuid(), Position = "d1", Color = ePlayerColor.White };
+		var rook = new Rook { Id = Guid.NewGuid(), Position = "d8", Color = ePlayerColor.Black };
+		var queen = new Queen { Id = Guid.NewGuid(), Position = "c3", Color = ePlayerColor.Black };
+		var board = new List<Figure> { king, rook, queen, friendlyPawn };
+
+		Assert.Multiple(() =>
+		{
+			Assert.That(friendlyPawn.IsValidMove(board, "c3"), Is.True);
+			Assert.That(friendlyPawn.IsKingInCheckAfterMove(board, "c3"), Is.True);
+			Assert.That(friendlyPawn.IsValidMove(board, "d3"), Is.True);
+		});
+	}
+
+	[Test]
+	public void King_PawnDoNotExposeKingToCheck()
+	{
+		var friendlyPawn = new Pawn { Id = Guid.NewGuid(), Position = "c2", Color = ePlayerColor.White };
+		var king = new King { Id = Guid.NewGuid(), Position = "d1", Color = ePlayerColor.White };
+		var queen = new Queen { Id = Guid.NewGuid(), Position = "b3", Color = ePlayerColor.Black };
+		var board = new List<Figure> { king, queen, friendlyPawn };
+
+		Assert.Multiple(() =>
+		{
+			Assert.That(friendlyPawn.IsValidMove(board, "c3"), Is.True);
+			Assert.That(friendlyPawn.IsKingInCheckAfterMove(board, "c3"), Is.True);
+		});
+	}
+
+	[Test]
+	public void King_CannotMoveToCheckPosition()
+	{
+		var friendlyPawn = new Pawn { Id = Guid.NewGuid(), Position = "d2", Color = ePlayerColor.White };
+		var king = new King { Id = Guid.NewGuid(), Position = "d1", Color = ePlayerColor.White };
+		var queen = new Queen { Id = Guid.NewGuid(), Position = "c3", Color = ePlayerColor.Black };
+		var board = new List<Figure> { king, queen, friendlyPawn };
+
+		Assert.Multiple(() =>
+		{
+			Assert.That(king.IsValidMove(board, "c1"), Is.True);
+			Assert.That(king.IsKingInCheckAfterMove(board, "c1"), Is.True);
+		});
+	}
 }
