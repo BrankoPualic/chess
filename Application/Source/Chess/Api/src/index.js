@@ -39,6 +39,7 @@ function signalr_Matchmaking() {
         currentMatch = match;
         lastMovedFigure = movedFigure;
         board_Init();
+        captures_Render(match);
     });
     matchmakingConnection.start().catch(function (err) { return console.error(err); });
 }
@@ -69,8 +70,10 @@ function board_Init() {
 function board_Render() {
     var container = $("#board");
     var boardMap = new Map(currentMatch.board.map(function (_) { return [_.position, _]; }));
+    var playerColor = currentMatch.playerWhite === playerId ? enumerators_1.ePlayerColor.White : enumerators_1.ePlayerColor.Black;
     var body = "<table><tbody>";
-    for (var i = 8; i > 0; i--) {
+    var i = playerColor === enumerators_1.ePlayerColor.White ? 8 : 1;
+    while (playerColor === enumerators_1.ePlayerColor.White ? i > 0 : i < 9) {
         body += "<tr id=\"row_".concat(i, "\" class=\"board-row\">");
         // ASCII (a, b, c, d, e, f, g, h)
         for (var j = 97; j < 105; j++) {
@@ -87,9 +90,23 @@ function board_Render() {
             body += "<span class=\"board-figure\" data-type=\"".concat(figure === null || figure === void 0 ? void 0 : figure.type, "\" data-color=\"").concat(figure === null || figure === void 0 ? void 0 : figure.color, "\">").concat(html, "</span>\n                </td>");
         }
         body += "</tr>";
+        playerColor === enumerators_1.ePlayerColor.White ? i-- : i++;
     }
     body += "</tbody></table>";
     container.html(body);
+}
+function captures_Render(match) {
+    var opponentContainer = $('#opponent-captures');
+    var playerContainer = $('#player-captures');
+    var playerColor = currentMatch.playerWhite === playerId ? enumerators_1.ePlayerColor.White : enumerators_1.ePlayerColor.Black;
+    var containerToAppendTo = playerColor === enumerators_1.ePlayerColor.White ? opponentContainer : playerContainer;
+    var body = '';
+    match.whiteCaptures.forEach(function (_) { return body += "<span>".concat(getBoardFigureHtml(_), "</span>"); });
+    containerToAppendTo.html(body);
+    containerToAppendTo = playerColor === enumerators_1.ePlayerColor.Black ? opponentContainer : playerContainer;
+    body = '';
+    match.blackCaptures.forEach(function (_) { return body += "<span>".concat(getBoardFigureHtml(_), "</span>"); });
+    containerToAppendTo.html(body);
 }
 function figure_Process() {
     $('.board-figure').each(function (i, el) {

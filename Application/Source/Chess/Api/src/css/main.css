@@ -69,8 +69,16 @@ td.cell.dark-cell {
     cursor: pointer;
 }
 
-.selected {
-    outline: 2px inset red;
+td.selected::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    outline: 2px solid red;
+    pointer-events: none;
+    z-index: 1;
 }
 
 #board table tbody tr,
@@ -95,3 +103,24 @@ td.cell.dark-cell {
     left: 50%;
     transform: translateX(-50%);
 }
+
+.captures {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+}
+
+    .captures > div {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: start;
+        margin: 2rem 0rem;
+    }
+
+        .captures > div > span {
+            margin-right: 1rem;
+            font-size: 2.5rem;
+            width: 50px;
+        }

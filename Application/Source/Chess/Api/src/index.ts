@@ -44,7 +44,8 @@ function signalr_Matchmaking(): void {
     matchmakingConnection.on('moved', (match: MatchDto, movedFigure: FigureDto) => {
         currentMatch = match;
         lastMovedFigure = movedFigure;
-        board_Init()
+        board_Init();
+        captures_Render(match);
     });
 
     matchmakingConnection.start().catch((err) => console.error(err));
@@ -85,10 +86,11 @@ function board_Init(): void {
 function board_Render(): void {
     const container = $(`#board`);
     const boardMap = new Map(currentMatch.board.map(_ => [_.position, _]));
+    const playerColor = currentMatch.playerWhite === playerId ? ePlayerColor.White : ePlayerColor.Black;
 
     let body = `<table><tbody>`;
-
-    for (let i = 8; i > 0; i--) {
+    let i = playerColor === ePlayerColor.White ? 8 : 1;
+    while (playerColor === ePlayerColor.White ? i > 0 : i < 9) {
         body += `<tr id="row_${i}" class="board-row">`;
 
         // ASCII (a, b, c, d, e, f, g, h)
@@ -102,7 +104,7 @@ function board_Render(): void {
             body += `<td id="col_${pos}" class="cell ${colorClass}">`;
             if (j === 97)
                 body += `<span class="row-numbering">${i}</span>`;
-            if (i === 1)
+            if ((playerColor === ePlayerColor.White && i === 1) || (playerColor === ePlayerColor.Black) && i === 8)
                 body += `<span class="col-numbering">${colChar}</span>`
 
             body += `<span class="board-figure" data-type="${figure?.type}" data-color="${figure?.color}">${html}</span>
@@ -110,10 +112,28 @@ function board_Render(): void {
         }
 
         body += `</tr>`;
+
+        playerColor === ePlayerColor.White ? i-- : i++;
     }
 
     body += `</tbody></table>`;
     container.html(body);
+}
+
+function captures_Render(match: MatchDto): void {
+    const opponentContainer = $('#opponent-captures');
+    const playerContainer = $('#player-captures');
+    const playerColor = currentMatch.playerWhite === playerId ? ePlayerColor.White : ePlayerColor.Black;
+
+    let containerToAppendTo = playerColor === ePlayerColor.White ? opponentContainer : playerContainer;
+    let body = '';
+    match.whiteCaptures.forEach(_ => body += `<span>${getBoardFigureHtml(_)}</span>`);
+    containerToAppendTo.html(body);
+
+    containerToAppendTo = playerColor === ePlayerColor.Black ? opponentContainer : playerContainer;
+    body = '';
+    match.blackCaptures.forEach(_ => body += `<span>${getBoardFigureHtml(_)}</span>`);
+    containerToAppendTo.html(body);
 }
 
 function figure_Process(): void {
