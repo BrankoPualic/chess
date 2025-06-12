@@ -11,4 +11,15 @@ public static class MatchExtensions
 		else
 			data.BlackCaptures.Add(figure);
 	}
+
+	public static List<string> GetAllBoardSquares()
+	{
+		var squares = new List<string>();
+
+		for (char c = 'a'; c <= 'h'; c++)
+			for (var r = 1; r <= 8; r++)
+				squares.Add($"{c}{r}");
+
+		return squares;
+	}
 }

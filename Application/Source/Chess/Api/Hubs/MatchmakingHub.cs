@@ -70,10 +70,12 @@ public class MatchmakingHub(MatchTracker matchTracker, BoardTracker boardTracker
 		if (!boardTracker.IsValidMove(request))
 			throw new InvalidOperationException("Your move is invalid");
 
-		if (request.MovedFigure.ToModel().IsKingInCheckAfterMove(request.Match.Board.Select(_ => _.ToModel()).ToList(), request.NewPosition))
+		if (boardTracker.IsKingInCheckAfterMove(request))
 			throw new InvalidOperationException("Your move is exposing king to check");
 
 		boardTracker.MoveFigure(request);
+
+		boardTracker.CheckForCheckmate(request);
 
 		await Clients.Clients(request.Match.PlayerBlack, request.Match.PlayerWhite).Moved(request.Match, request.MovedFigure);
 	}

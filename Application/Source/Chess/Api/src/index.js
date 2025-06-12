@@ -79,7 +79,12 @@ function board_Render() {
             var colorClass = (i % 2 + j % 2) === 1 ? 'light-cell' : 'dark-cell';
             var figure = boardMap.get(pos);
             var html = getBoardFigureHtml(figure);
-            body += "<td id=\"col_".concat(pos, "\" class=\"cell ").concat(colorClass, "\">\n                        <span class=\"board-figure\" data-type=\"").concat(figure === null || figure === void 0 ? void 0 : figure.type, "\" data-color=\"").concat(figure === null || figure === void 0 ? void 0 : figure.color, "\">").concat(html, "</span>\n                    </td>");
+            body += "<td id=\"col_".concat(pos, "\" class=\"cell ").concat(colorClass, "\">");
+            if (j === 97)
+                body += "<span class=\"row-numbering\">".concat(i, "</span>");
+            if (i === 1)
+                body += "<span class=\"col-numbering\">".concat(colChar, "</span>");
+            body += "<span class=\"board-figure\" data-type=\"".concat(figure === null || figure === void 0 ? void 0 : figure.type, "\" data-color=\"").concat(figure === null || figure === void 0 ? void 0 : figure.color, "\">").concat(html, "</span>\n                </td>");
         }
         body += "</tr>";
     }

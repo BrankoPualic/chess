@@ -99,9 +99,14 @@ function board_Render(): void {
             const figure = boardMap.get(pos);
             const html = getBoardFigureHtml(figure);
 
-            body += `<td id="col_${pos}" class="cell ${colorClass}">
-                        <span class="board-figure" data-type="${figure?.type}" data-color="${figure?.color}">${html}</span>
-                    </td>`;
+            body += `<td id="col_${pos}" class="cell ${colorClass}">`;
+            if (j === 97)
+                body += `<span class="row-numbering">${i}</span>`;
+            if (i === 1)
+                body += `<span class="col-numbering">${colChar}</span>`
+
+            body += `<span class="board-figure" data-type="${figure?.type}" data-color="${figure?.color}">${html}</span>
+                </td>`;
         }
 
         body += `</tr>`;

@@ -1,6 +1,4 @@
-﻿using Api.Domain;
-
-namespace Api.Dtos;
+﻿namespace Api.Dtos;
 
 public class MatchDto
 {
@@ -11,6 +9,10 @@ public class MatchDto
 	public string PlayerBlack { get; set; }
 
 	public ePlayerColor PlayerTurn { get; set; }
+
+	public bool IsCheckmate { get; set; }
+
+	public string PlayerVictorious { get; set; }
 
 	public List<FigureDto> Board { get; set; } = [];
 

@@ -72,8 +72,30 @@ public class BoardTracker
 	}
 
 	public bool IsValidMove(MoveRequest request) => request.MovedFigure.ToModel().IsValidMove(
-		request.Match.Board.Select(_ => _.ToModel()).ToList(),
+		GetBoardFiguresFromRequest(request),
 		request.NewPosition,
 		request.LastMovedFigure?.ToModel()
 	);
+
+	public bool IsKingInCheckAfterMove(MoveRequest request)
+		=> request.MovedFigure.ToModel().IsKingInCheckAfterMove(GetBoardFiguresFromRequest(request), request.NewPosition);
+
+	public void CheckForCheckmate(MoveRequest request)
+	{
+		var boardAfterMove = GetBoardFiguresFromRequest(request);
+		var opponentKing = boardAfterMove.FirstOrDefault(_ => _.Type == eFigureType.King && _.Color != request.MovedFigure.Color);
+
+		var isCheckmate = opponentKing?.IsCheckmate(boardAfterMove, request.MovedFigure.ToModel()) == true;
+
+		if (isCheckmate)
+		{
+			request.Match.IsCheckmate = true;
+			request.Match.PlayerVictorious = request.Match.PlayerTurn == ePlayerColor.White
+				? request.Match.PlayerBlack
+				: request.Match.PlayerWhite;
+		}
+	}
+
+	private static List<Figure> GetBoardFiguresFromRequest(MoveRequest request)
+		=> request.Match.Board.Select(_ => _.ToModel()).ToList();
 }

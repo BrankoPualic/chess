@@ -1,5 +1,6 @@
 ﻿using Api.Domain;
 using Api.Dtos;
+using Api.Extensions;
 using Api.Hubs.Trackers;
 
 namespace Test;
@@ -45,6 +46,19 @@ public class BoardUT
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Knight).ToList(), Has.Count.EqualTo(2));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Pawn).ToList(), Has.Count.EqualTo(8));
 			Assert.That(_board.Where(_ => _.Color == ePlayerColor.Black && _.Type == eFigureType.Pawn).All(_ => _.Position.EndsWith('7')), Is.True);
+		});
+	}
+
+	[Test]
+	public void Board_GetAllSquares()
+	{
+		var squares = MatchExtensions.GetAllBoardSquares();
+
+		Assert.Multiple(() =>
+		{
+			Assert.That(squares, Has.Count.EqualTo(64));
+			Assert.That(squares.First(), Is.EqualTo("a1"));
+			Assert.That(squares.Last(), Is.EqualTo("h8"));
 		});
 	}
 }

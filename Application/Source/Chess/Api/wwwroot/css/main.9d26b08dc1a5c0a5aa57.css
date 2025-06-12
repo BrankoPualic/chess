@@ -75,3 +75,26 @@ td.cell.dark-cell {
 .selected {
     outline: 2px inset red;
 }
+
+#board table tbody tr,
+#board table tbody tr td {
+    position: relative;
+}
+
+.row-numbering {
+    position: absolute;
+    left: -2rem;
+    font-size: 1.5rem;
+    color: #2196f3;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.col-numbering {
+    position: absolute;
+    bottom: -2.5rem;
+    font-size: 1.5rem;
+    color: #2196f3;
+    left: 50%;
+    transform: translateX(-50%);
+}

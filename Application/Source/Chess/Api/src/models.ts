@@ -13,7 +13,11 @@ export class MatchDto {
     playerWhite: string;
     playerBlack: string;
     playerTurn: ePlayerColor;
+    isCheckmate: boolean;
+    playerVictorious: string;
     board: FigureDto[];
+    blackCaptures: FigureDto[];
+    whiteCaptures: FigureDto[];
 }
 
 export class MoveRequest {

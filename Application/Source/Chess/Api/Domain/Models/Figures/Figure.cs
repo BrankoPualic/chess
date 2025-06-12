@@ -24,7 +24,30 @@ public abstract class Figure
 		clonedBoard.RemoveAll(_ => _.Position == newPosition && _.Color != figureToMove.Color);
 
 		var king = clonedBoard.FirstOrDefault(_ => _.Type == eFigureType.King && _.Color == Color);
-		return clonedBoard.Any(_ => _.Color != king.Color && _.IsValidMove(clonedBoard, king.Position, null));
+		return clonedBoard.Any(_ => _.Color != king.Color && _.IsValidMove(clonedBoard, king.Position));
+	}
+
+	public bool IsCheckmate(List<Figure> board, Figure lastMovedFigure = null)
+	{
+		var currentPlayerFigures = board.Where(_ => _.Color == Color).ToList();
+
+		foreach (var figure in currentPlayerFigures)
+		{
+			foreach (var targetSquare in MatchExtensions.GetAllBoardSquares())
+			{
+				if (figure.IsValidMove(board, targetSquare, lastMovedFigure))
+				{
+					var clonedBoard = board.Select(_ => _.MemberwiseClone() as Figure).ToList();
+					var clonedFigure = clonedBoard.First(_ => _.Id == figure.Id);
+					clonedFigure.Position = targetSquare;
+
+					if (!clonedFigure.IsKingInCheckAfterMove(clonedBoard, targetSquare))
+						return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	protected bool IsTargetOfTheSameColor(List<Figure> board, string newPosition)

@@ -17,9 +17,8 @@ public class Queen : Figure
 		int rowStep = Math.Sign(newRow - oldRow);
 		int colStep = Math.Sign(newCol - oldCol);
 
-		// Convert to integers for looping
-		int startRow = oldRow - '0';
-		int endRow = newRow - '0';
+		int startRow = oldRow;
+		int endRow = newRow;
 		int startCol = oldCol;
 		int endCol = newCol;
 
